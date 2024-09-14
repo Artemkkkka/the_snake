@@ -91,8 +91,8 @@ class Apple(GameObject):
         width: int = randint(0, GRID_WIDTH)
         height: int = randint(0, GRID_HEIGHT)
         while (width * GRID_SIZE, height * GRID_SIZE) in Snake().positions:
-            width = random.randint(0, GRID_WIDTH - 1)
-            height = random.randint(0, GRID_HEIGHT - 1)
+            width = randint(0, GRID_WIDTH - 1)
+            height = randint(0, GRID_HEIGHT - 1)
         
         self.position = (width * GRID_SIZE, height * GRID_SIZE)
 
@@ -132,6 +132,11 @@ class Snake(GameObject):
         new_width: int = (width + GRID_SIZE * self.direction[0]) % SCREEN_WIDTH
         new_height: int = (height + GRID_SIZE * self.direction[1]) % SCREEN_HEIGHT
         new_head: tuple[int, int] = (new_width, new_height)
+
+        if Apple().position == self.get_head_position():
+            self.length += 1
+            Apple().randomize_position()
+
         if self.length == len(self.positions):
             self.positions.insert(0, new_head)
             self.last = self.positions[-1]
@@ -207,10 +212,7 @@ def main() -> None:
         apple.draw()
         snake.move()
         snake.draw()
-        if apple.position == snake.get_head_position():
-            snake.length += 1
-            apple.randomize_position()
-
+        
         handle_keys(snake)
         snake.update_direction()
         pg.display.update()
