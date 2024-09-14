@@ -1,4 +1,5 @@
 from random import randint
+from typing import Optional
 
 import pygame as pg
 
@@ -93,7 +94,6 @@ class Apple(GameObject):
         while (width * GRID_SIZE, height * GRID_SIZE) in Snake().positions:
             width = randint(0, GRID_WIDTH - 1)
             height = randint(0, GRID_HEIGHT - 1)
-        
         self.position = (width * GRID_SIZE, height * GRID_SIZE)
 
     def draw(self) -> None:
@@ -112,7 +112,7 @@ class Snake(GameObject):
 
     def __init__(self, body_color: COLOR = SNAKE_COLOR):
         """Инициализирует начальное состояние змейки."""
-        super().__init__(body_color = body_color)
+        super().__init__(body_color=body_color)
         self.length: int = 1
         self.positions: list[tuple[int, int]] = [self.position]
         self.direction: POINTER = RIGHT
@@ -130,7 +130,9 @@ class Snake(GameObject):
         head: tuple[int, int] = self.get_head_position()
         width, height = head
         new_width: int = (width + GRID_SIZE * self.direction[0]) % SCREEN_WIDTH
-        new_height: int = (height + GRID_SIZE * self.direction[1]) % SCREEN_HEIGHT
+        new_height: int = (
+            height + GRID_SIZE * self.direction[1]
+        ) % SCREEN_HEIGHT
         new_head: tuple[int, int] = (new_width, new_height)
 
         if self.length == len(self.positions):
