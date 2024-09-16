@@ -217,8 +217,8 @@ def main() -> None:
         if apple.position == snake.get_head_position():
             snake.length += 1
             apple.randomize_position()
-        handle_keys(snake)
         snake.update_direction()
+        handle_keys(snake)
         pygame.display.update()
 
 
