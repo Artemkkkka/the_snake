@@ -207,7 +207,7 @@ def main() -> None:
 
     while True:
         clock.tick(SPEED)
-        
+
         apple.draw()
         snake.move()
         snake.draw()
