@@ -87,7 +87,7 @@ class Apple(GameObject):
         """
         super().__init__(body_color=body_color)
         self.snake_position = snake_position
-        self.randomize_position()
+        self.randomize_position(self.snake_position)
 
     def randomize_position(self, snake_position) -> None:
         """
@@ -142,13 +142,14 @@ class Snake(GameObject):
             (width + GRID_SIZE * self.direction[0]) % SCREEN_WIDTH,
             (height + GRID_SIZE * self.direction[1]) % SCREEN_HEIGHT
         )
-        self.positions.insert(0, new_head)
 
         if self.length == len(self.positions):
             self.last = self.positions[-1]
             self.positions.pop()
         else:
             self.last = None
+
+        self.positions.insert(0, new_head)
 
     def draw(self) -> None:
         """Отрисовывает змейку на экране, затирая след."""
