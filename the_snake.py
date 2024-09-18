@@ -74,7 +74,13 @@ class Apple(GameObject):
     с ним. Яблоко должно отображаться в случайных клетках игрового поля.
     """
 
-    def __init__(self, snake_position, body_color: COLOR = APPLE_COLOR):
+    def __init__(
+            self,
+            snake_position: list[tuple[int, int]] = [
+                ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
+            ],
+            body_color: COLOR = APPLE_COLOR
+    ):
         """
         Задаёт цвет яблока и вызывает метод randomize_position, чтобы
         установить начальную позицию яблока.
@@ -213,7 +219,7 @@ def main() -> None:
             screen.fill(BOARD_BACKGROUND_COLOR)
         if apple.position == snake.get_head_position():
             snake.length += 1
-            apple.randomize_position()
+            apple.randomize_position(snake.positions)
         snake.update_direction()
         handle_keys(snake)
         pygame.display.update()
