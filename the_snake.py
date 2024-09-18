@@ -66,7 +66,6 @@ class GameObject:
         дочерних классах. Этот метод должен определять, как объект будет
         отрисовываться на экране. По умолчанию — pass.
         """
-        pass
 
 
 class Apple(GameObject):
@@ -75,15 +74,16 @@ class Apple(GameObject):
     с ним. Яблоко должно отображаться в случайных клетках игрового поля.
     """
 
-    def __init__(self, body_color: COLOR = APPLE_COLOR):
+    def __init__(self, snake_position, body_color: COLOR = APPLE_COLOR):
         """
         Задаёт цвет яблока и вызывает метод randomize_position, чтобы
         установить начальную позицию яблока.
         """
         super().__init__(body_color=body_color)
+        self.snake_position = snake_position
         self.randomize_position()
 
-    def randomize_position(self) -> None:
+    def randomize_position(self, snake_position) -> None:
         """
         Устанавливает случайное положение яблока на игровом поле — задаёт
         атрибуту position новое значение. Координаты выбираются так,
@@ -92,13 +92,13 @@ class Apple(GameObject):
         max_width = GRID_WIDTH - 1
         max_height = GRID_HEIGHT - 1
         while True:
-            width = randint(0, max_width)
-            height = randint(0, max_height)
+            width = randint(0, max_width) * GRID_SIZE
+            height = randint(0, max_height) * GRID_SIZE
             if (
-                width * GRID_SIZE, height * GRID_SIZE
-            ) not in Snake().positions:
-                self.position = (width * GRID_SIZE, height * GRID_SIZE)
-                break
+                width, height
+            ) not in snake_position:
+                self.position = (width, height)
+                return
 
     def draw(self) -> None:
         """Отрисовывает яблоко на игровой поверхности."""
@@ -131,20 +131,17 @@ class Snake(GameObject):
 
     def move(self) -> None:
         """Обновляет позицию змейки, учитывая границы поля."""
-        head: tuple[int, int] = self.get_head_position()
-        width, height = head
-        new_width: int = (width + GRID_SIZE * self.direction[0]) % SCREEN_WIDTH
-        new_height: int = (
-            height + GRID_SIZE * self.direction[1]
-        ) % SCREEN_HEIGHT
-        new_head: tuple[int, int] = (new_width, new_height)
+        width, height = self.get_head_position()
+        new_head: tuple[int, int] = (
+            (width + GRID_SIZE * self.direction[0]) % SCREEN_WIDTH,
+            (height + GRID_SIZE * self.direction[1]) % SCREEN_HEIGHT
+        )
+        self.positions.insert(0, new_head)
 
         if self.length == len(self.positions):
-            self.positions.insert(0, new_head)
             self.last = self.positions[-1]
             self.positions.pop()
         else:
-            self.positions.insert(0, new_head)
             self.last = None
 
     def draw(self) -> None:
@@ -202,8 +199,8 @@ def main() -> None:
     pygame.init()
 
     # Тут нужно создать экземпляры классов.
-    apple = Apple()
     snake = Snake()
+    apple = Apple(snake.positions)
 
     while True:
         clock.tick(SPEED)
