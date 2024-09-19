@@ -76,7 +76,7 @@ class Apple(GameObject):
 
     def __init__(
             self,
-            snake_position: list[tuple[int, int]] = [
+            occupied_position: list[tuple[int, int]] = [
                 ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
             ],
             body_color: COLOR = APPLE_COLOR
@@ -86,10 +86,9 @@ class Apple(GameObject):
         установить начальную позицию яблока.
         """
         super().__init__(body_color=body_color)
-        self.snake_position = snake_position
-        self.randomize_position(self.snake_position)
+        self.randomize_position(occupied_position)
 
-    def randomize_position(self, snake_position) -> None:
+    def randomize_position(self, occupied_position) -> None:
         """
         Устанавливает случайное положение яблока на игровом поле — задаёт
         атрибуту position новое значение. Координаты выбираются так,
@@ -102,7 +101,7 @@ class Apple(GameObject):
             height = randint(0, max_height) * GRID_SIZE
             if (
                 width, height
-            ) not in snake_position:
+            ) not in occupied_position:
                 self.position = (width, height)
                 return
 
@@ -142,13 +141,10 @@ class Snake(GameObject):
             (width + GRID_SIZE * self.direction[0]) % SCREEN_WIDTH,
             (height + GRID_SIZE * self.direction[1]) % SCREEN_HEIGHT
         )
-
-        if self.length == len(self.positions):
-            self.last = self.positions[-1]
+        self.last = (
             self.positions.pop()
-        else:
-            self.last = None
-
+            if len(self.positions) == self.length else None
+        )
         self.positions.insert(0, new_head)
 
     def draw(self) -> None:
